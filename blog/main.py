@@ -25,13 +25,20 @@ class Contacts(db.Model):
     msg = db.Column(db.String(120), nullable=False)
     date = db.Column(db.String(12), nullable=True)
 
+class Posts(db.Model):
+    sno = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80), nullable=False)
+    slug = db.Column(db.String(21), nullable=False)
+    content = db.Column(db.String(120), nullable=False)
+    date = db.Column(db.String(12), nullable=True)
+    img_file = db.Column(db.String(12), nullable=True)
+
 
 @app.route('/')
 def home():
-    return render_template('/index.html', params=params)
-# @app.route('/index')
-# def index():
-#     return render_template('/index.html')
+    posts = Posts.query.filter_by().all()[0:params['no_of_post']]
+    return render_template('/index.html', params=params, posts=posts)
+
 
 @app.route('/about')
 def about():
@@ -54,6 +61,8 @@ def contact():
 
     return render_template('/contact.html', params=params)
 
-@app.route('/post')
-def post():
-    return render_template('/post.html', params=params)
+@app.route('/post/<string:post_slug>', methods=["GET"])
+def post_route(post_slug):
+    # Fetch data from database
+    post = Posts.query.filter_by(slug=post_slug).first()
+    return render_template('/post.html', params=params, post=post)
