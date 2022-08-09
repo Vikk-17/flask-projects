@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, url_for
+import email
+from flask import Flask, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import date, datetime
 import json
 
 app = Flask(__name__)
-
+app.secret_key = 'super-secret-key'
 
 with open("config.json", mode='r') as c:
     params = json.load(c)["params"]
@@ -43,6 +44,26 @@ def home():
 @app.route('/about')
 def about():
     return render_template('/about.html', params=params)
+
+@app.route('/dashboard', methods=["GET", "POST"])
+def login():
+    if "user" in session and session['user'] == params['email']:
+        posts = Posts.query.all()
+        return render_template('dashboard.html', params=params, posts=posts)
+    
+    if request.method == "POST":
+        # Redirect to admin panel
+        data = request.form.to_dict()
+        email = data['email']
+        password = data['password']
+        print(data)
+        if email == params['email'] and password == params['password']:
+            # set the session variable
+            session['user'] = email
+            pass
+        
+    else :
+        return render_template('/login.html', params=params)
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
