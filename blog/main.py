@@ -1,5 +1,4 @@
-import email
-from flask import Flask, render_template, request, url_for, session
+from flask import Flask, render_template, request, url_for, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime
 import json
@@ -67,7 +66,40 @@ def login():
         return render_template('/login.html', params=params)
 
 
+@app.route("/edit/<string:sno>", methods=["GET", "POST"])
+def edit(sno):
+    if 'user' in session and session['user']==params['username']:
+        
+        if request.method=='POST':
+            data = request.form.to_dict()
+            title = data['title']
+            # tline = data['tline']
+            slug = data['slug']
+            content = data['content']
+            img_file = data['img_file']
+            date = datetime.now()
 
+        ## FACING ERROR
+        # if sno=='0':
+        #     post = Posts(title=title, slug=slug, content=content, img_file=img_file, date=date)
+        #     db.session.add(post)
+        #     db.session.commit()
+        
+        # else:
+        #     post = Posts.query.filter_by(sno=sno).first()
+        #     post.box_title = title
+        #     # post.tline = tline
+        #     post.slug = slug
+        #     post.content = content
+        #     post.img_file = img_file
+        #     post.date = date
+        #     db.session.commit()
+        #     return redirect('/edit/'+sno)
+        
+
+    post = Posts.query.filter_by(sno=sno).first()
+    return render_template('/edit.html', params=params, post=post)
+    
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
