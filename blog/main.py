@@ -47,23 +47,27 @@ def about():
 
 @app.route('/dashboard', methods=["GET", "POST"])
 def login():
-    if "user" in session and session['user'] == params['email']:
+    if "user" in session and session['user'] == params['username']:
         posts = Posts.query.all()
         return render_template('dashboard.html', params=params, posts=posts)
     
     if request.method == "POST":
         # Redirect to admin panel
         data = request.form.to_dict()
-        email = data['email']
-        password = data['password']
-        print(data)
-        if email == params['email'] and password == params['password']:
+        username = data['uname']
+        userpass = data['upass']
+        # print(data)
+        if username == params['username'] and userpass == params['password']:
             # set the session variable
-            session['user'] = email
-            pass
+            session['user'] = username
+            posts = Posts.query.all()
+            return render_template('dashboard.html', params=params, posts=posts)
         
     else :
         return render_template('/login.html', params=params)
+
+
+
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
