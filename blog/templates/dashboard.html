@@ -22,10 +22,17 @@
             <div class="row gx-4 gx-lg-5 justify-content-center">
                 <div class="col-md-10 col-lg-8 col-xl-7">
 
+                    <h1>Basic Actions</h1>
+                    <button type="/edit/0" class="btn btn-primary">Add Post</button>
+                    <button type="/logout" class="btn btn-primary">Logout</button>
+                    <hr class="my-4">
+
                     <h1>Upload a file</h1>
-                    <div class="row">
-                        we will add file uploader here
-                    </div>
+                    <form action="/uploader" method="post" enctype="multipart/form-data">
+                        <input type="file" name="file1">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+
                     <hr class="my-4">
                     <h1>Edit Posts</h1>
                     <table class="table">
@@ -47,7 +54,7 @@
                             <td>{{post.title}}</td>
                             <td>{{post.date}}</td>
                             <td><a href="/edit/{{post.sno}}"><button class="btn btn-primary">Edit</button></a</td>
-                            <td><button class="btn btn-primary">Delete</button></td>
+                            <td><a href="/delete/{{post.sno}}"><button class="btn btn-primary">Delete</button></a></td>
                             <td></td>
                           </tr>
                           {% endfor %}

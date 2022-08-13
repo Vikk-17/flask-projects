@@ -1,13 +1,21 @@
 from flask import Flask, render_template, request, url_for, session, redirect
 from flask_sqlalchemy import SQLAlchemy
-from datetime import date, datetime
+from datetime import  datetime
 import json
+import os
+from werkzeug.utils import secure_filename
+
+
 
 app = Flask(__name__)
 app.secret_key = 'super-secret-key'
 
+
+
 with open("config.json", mode='r') as c:
     params = json.load(c)["params"]
+
+app.config['UPLOAD_FOLDER'] = params['upload_location']
 
 local_server = True
 if local_server:
@@ -100,6 +108,29 @@ def edit(sno):
     post = Posts.query.filter_by(sno=sno).first()
     return render_template('/edit.html', params=params, post=post)
     
+
+@app.route('/uploader', methods=['GET', 'POST'])
+def uploader():
+    if 'user' in session and session['user']==params['username']:
+        
+        if request.method=='POST':
+            inp_file = request.files['file1']
+            inp_file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(inp_file.filename)))
+            return "Uploaded successfully"
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user')
+    return redirect('/dashboard')
+
+@app.route("/delete/<string:sno>" , methods=['GET', 'POST'])
+def delete(sno):
+    if "user" in session and session['user']==params['username']:
+        post = Posts.query.filter_by(sno=sno).first()
+        db.session.delete(post)
+        db.session.commit()
+    return redirect("/dashboard")
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
